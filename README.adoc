@@ -82,6 +82,8 @@ number of workers, etc
 * a very simple controller with an upper and lower bound, which should bring the number of threads of the thread-pool (workers) to a level, where the CPU load is 80%
 * a host computer which is idling and doing nothing else
 
+TODO illustration
+
 ==== Expectation
 
 ===== Swinging
@@ -107,8 +109,8 @@ Same as 1, but no swinging.
 
 Regarding thread-pool sizes
 
-* Payload of workers not deterministic
-* External process varying CPU load
+* Payload of workers not deterministic (internal disturbance)
+* CPU load of external process varying (external disturbance)
 * A second source a control: Amount of free memory
 * ...
 
