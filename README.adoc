@@ -1,0 +1,128 @@
+= Adaptive control experiments in Java
+Peti Koch
+:imagesdir: ./images
+
+Peti Koch +
+24 April  2015
+
+_This is an early DRAFT_
+
+== Introduction
+
+I'm not an expert on the topic of "control theory", "adaptive control", "self-adaptive systems", "PID controller", "queueing theory", etc.
+Therefor the terms I use here may be wrong or not exactly right. If you are an expert on one or more of these topics,
+please feel free to fork this repo and send me a pull request with fixes for the wording. I'll help you with the tool setup if necessary.
+
+I'm a software engineer from Switzerland with 14 years hands-on experience.
+I work most of the time as an external consultant, doing some opensource-development/education/community-stuff in my "free time".
+
+=== The story
+
+The team-leader of the team where I work at the moment has a background in electrical engineering.
+For him, it's totally clear that we have "feedback control" like systems using controllers, sensors *everywhere*.
+These "things" give you "cruise control" in your car, a constant temperature in your room
+or a self-flying plane with two dormant pilots.
+
+You certainly noticed, that when you are driving your car and using the "cruise control" feature of it, the car goes at
+constant speed, e.g. 55 mph. If the road climbs, the car doesn't slow down, the "cruise control system" let the engine work a little bit harder to keep the pace.
+Same for the newer "adaptive cruise control" feature, where the speed of the car in front of you is measured and your car
+reacts on it, too. So you drive only 55 mph if there is no car in front of you or if it's faster than 55 mph,
+otherwise you have the same speed as the car in front of you. That's cool!
+
+*But why did I never see something like this in the design of a software system?*
+
+For example in a batch program, where the number of workers (threads) is dependent on the average CPU load of the system it's working on?
+We want to go "fullspeed", but not go into the red area. And not to slow. E.g. our batch program should use 85%-90% of the CPU power
+(or memory, or ...). The problem here is, that each piece of work that the workers (threads) do, is not very deterministic
+(because of if/else, strategies, calls to other systems, ... everywhere in the sourcecode).
+
+Or another example would be the maximum size of a queue (array, buffer, ...). If you don't know the size of the elements which will be soon in the queue, but you have "only"
+8 GB RAM, what's then the max number of elements of the queue? If you make it unbounded or too large, you risk an OutOfMemoryError (Crash).
+If you make it too small, you are not using all your hardware. Of course, you do try and error with
+some kind of configurable values to figure out the "best settings", but you probably have to do that for each kind of different box (8 GB, 4 GB, 16 GB, ...),
+where always exactly the same piece of software runs. Think of a software vendor shipping his 400-kb-jar program to thousands
+of different customers using different old and new macbooks, desktops, rasperry-pis, etc. That's either a lot of work to create
+different "default" configurations, kind of an if/else-hell in the sourcecode or just a suboptimal configuration.
+
+
+== Motivation
+
+I currently work in test-automation for software systems. The test-automation system operates a "system under test" (a black box) like a puppet.
+(Think of a GUI roboter opening up the GUI of the "system under test" and clicking thru its menues, wizards, forms, ect.)
+
+The problem here is, that you want to have as quickly as possible the results of the thousands of functional tests you have written,
+but on a "system under test" working in the "green area", not in the "red area". It's not load-testing or over-load testing,
+where it probably behaves different (strange). You do functional testing where you expect 1+1=2, even with 100% CPU load and swapping OS.
+
+The question for us now is, *how many tests can we execute in parallel without "pushing to hard"*.
+By now, we do it by manually controlling the number of workers in parallel (threads) and having an eye on the Ganglia webclient to check the load.
+With a little experience, you know pretty soon that the "system under test" instance X can deal with 5 workers,
+and the instance Y with 8, etc. An additional problem here is, that you are not alone on some of these boxes or that some of the boxes do not have a constant number of CPU cores... They are virtual boxes.
+At night, you can go with 10 workers for example, during the day only with 5.
+But you don't want to sit nearby all the time and do the adjustment of the number of parallel workers by hand.
+Or to buy additional hardware boxes, where "you are alone" and with constant CPU power.
+
+We want cruise control!
+
+== Experiments
+
+In this little github-opensource-project I'll do some experiments. You'll open some small little Java application with a GUI,
+configure some parameters and let it run. You'll have some monitors and graphs to see the behaviour of the system.
+You can experiment then with different controllers, with different kind of deterministic or non-deterministic load,
+number of workers, etc
+
+=== Experiment 1: Thread-Pool size with very simple controller and deterministic load
+
+==== Setup
+
+* 1 standalone application
+* a Runnable implementation for the "workers" (threads) which produces a constant CPU load
+* a dynamic thread-pool (workers)
+* a sensor which delivers the systems CPU load
+* a very simple controller with an upper and lower bound, which should bring the number of threads of the thread-pool (workers) to a level, where the CPU load is 80%
+* a host computer which is idling and doing nothing else
+
+==== Expectation
+
+===== Swinging
+
+* After starting, the controller should increase the number of workers to a "good level" and the CPU load is at 80%. *good!*
+* But then it will decrease the number of workers by 1 (or n), then increase it by 1 (or n), then decrease, increase, ... The system will "swing". *bad*.
+
+===== Reacting to external disturbance
+
+* If there is another process starting and consuming a lot of CPU power at a *constant* level, "our" process will throttle it's numbers of workers. Somehow *good* in terms of not overloading the computer.
+
+=== Experiment 2: Thread-Pool size with a PID controller
+
+==== Setup
+
+Same as 1, but with a better controller. A PID controller, which is widely used today.
+
+==== Expectation
+
+Same as 1, but no swinging.
+
+=== Experiment 3, 4, 5, ...
+
+Regarding thread-pool sizes
+
+* Payload of workers not deterministic
+* External process varying CPU load
+* A second source a control: Amount of free memory
+* ...
+
+
+Regarding queue sizes
+
+* Maximum queue size depending on free memory with blocking backpressure
+* Maximum queue size depending on free memory with rejecting new elements
+* ...
+
+== Summary
+
+This is work in progress. Thanks for your feedback.
+
+Best regards,
+
+image::Signature.jpg[]
