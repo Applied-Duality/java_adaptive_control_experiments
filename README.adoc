@@ -143,6 +143,10 @@ Regarding adaptive quality of service
 
 * ...
 
+Regarding load-balancing
+
+* ...
+
 == Summary
 
 This is work in progress. Thanks for your feedback.
