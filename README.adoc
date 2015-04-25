@@ -52,12 +52,12 @@ different "default" configurations, kind of an if/else-hell in the sourcecode or
 I currently work in test-automation for software systems. The test-automation system operates a "system under test" (a black box) like a puppet.
 (Think of a GUI roboter opening up the GUI of the "system under test" and clicking thru its menues, wizards, forms, ect.)
 
-The problem here is, that you want to have as quickly as possible the results of the thousands of functional tests you have written,
-but on a "system under test" working in the "green zone", not in the "red zone". It's not load-testing or over-load testing,
+The problem here is, that we want to have as quickly as possible the results of the thousands of functional tests you have written,
+but on a "system under test" working in the "green zone", not in the "red zone". It's not load-testing and it's not over-load testing,
 where it probably behaves different (strange). You do functional testing where you expect 1+1=2, even with 100% CPU load and swapping OS.
 
 The question for us now is, *how many tests can we execute in parallel without "pushing to hard"*.
-By now, we do it by manually controlling the number of workers in parallel (threads) and having an eye on the Ganglia webclient to check the load.
+By now, we do it by manually controlling the number of workers in parallel (threads) and having an eye on the Ganglia footnoe:[http://en.wikipedia.org/wiki/Ganglia_(software)] webclient to check the load.
 With a little experience, you know pretty soon that the "system under test" instance X can deal with 5 workers,
 and the instance Y with 8, etc. An additional problem here is, that you are not alone on some of these boxes or that some of the boxes do not have a constant number of CPU cores... They are virtual boxes.
 At night, you can go with 10 workers for example, during the day only with 5.
@@ -72,19 +72,19 @@ On the other side is the "system under test" (think of e.g. a webapplication), w
 and deliver the quality of service it's clients expect. And if it can't, it's better to reduce the quality of service a little bit
 (e.g. reduce resolution of a streaming video service from 1080p to 720p) than to "go down" (crash) or "don't reply".
 See the point? The "system under test" has different strategies to deal with "overload":
-"crashing", "reducing qos", "only serving some of the clients" (e.g. serve the logged-in-clients and deny the new clients who wan't to log in),
+"crashing", "reducing qos", "only serving some of the clients" (e.g. serve the logged-in-clients and deny the new clients who want to log-in),
 some kind of backpressure, etc.
 
 In the case of choosing "reducing qos". Wouldn't it be nice to have an adaptive controller, which automatically reduces
-the delivered video resolution if the the load is to much? That's not great, but better than crashing/not responding/strange behavior.
+the delivered video resolution if the load is "to much"? That's not great, but better than crashing/not responding/strange behavioring.
 
 Cruise control, again!
 
 == Experiments
 
-In this little github-opensource-project I'll do some experiments. Interested people will open some small little Java application with a GUI,
+In this little github-opensource-project I'll do some experiments. Interested people can open some small little Java application with a GUI,
 configure some parameters and let it run. You'll have some monitors and graphs to see the behaviour of the system.
-You can experiment then with different controllers, with different kind of deterministic or non-deterministic load,
+You can experiment with different controllers, with different kind of deterministic or non-deterministic load,
 changing the settings, the number of workers, etc
 
 === Experiment 1: Adapting size of thread-pool with very simple controller and deterministic load
@@ -96,7 +96,7 @@ changing the settings, the number of workers, etc
 * a dynamic thread-pool (workers)
 * a sensor which delivers the systems CPU load
 * a very simple controller with a chooseable target level for CPU load, e.g. 80% and a simple behavior: increase the number of threads (workers) if below target level, decrease the number of threads (workers) if above target level
-* a host computer which is idling and doing nothing else
+* a host computer which is idling and doing nothing else (you are "alone" on it)
 
 TODO illustration
 
@@ -105,11 +105,11 @@ TODO illustration
 ===== Swinging
 
 * After starting, the controller should increase the number of threads (workers) to a "good level" and the CPU load is at around 80%. *good!*
-* But then it will decrease the number of workers by 1 (or n), then increase it by 1 (or n), then decrease, increase, ... The system will "swing". *bad* if it swinging heavily (0..9..0..9..).
+* But then it will decrease the number of workers by 1 (or n), then increase it by 1 (or n), then decrease, increase, ... The system will "swing". *bad* if it is swinging heavily (0..9..0..9..), not bad if it's swinging only a little (7..8..7..8..)
 
 ===== Reacting to external disturbance
 
-* If there is another process on the same host computer starting and consuming a lot of CPU power at a *constant* level, "our" process will throttle it's numbers of workers. Somehow *good* in terms of not overloading the computer.
+* If there is another process on the same host computer starting and consuming a lot of CPU power at a *constant* level, "our" process will throttle it's numbers of workers and reduce it's CPU usage. Somehow *good* in terms of not overloading the computer and being fair.
 
 === Experiment 2: Adapting size of thread-pool with a PID controller
 
@@ -123,7 +123,7 @@ Same as 1, but no swinging (or little swinging).
 
 === Experiment 3, 4, 5, ...
 
-Regarding thread-pool sizes
+Regarding adaptive thread-pool sizes
 
 * Payload of workers not deterministic (internal disturbance)
 * CPU load of external process varying (external disturbance)
@@ -132,10 +132,14 @@ Regarding thread-pool sizes
 * ...
 
 
-Regarding queue sizes
+Regarding adaptive queue sizes
 
 * Maximum queue size depending on free memory with blocking backpressure
 * Maximum queue size depending on free memory with rejecting new elements
+* ...
+
+Regarding adaptive quality of service
+
 * ...
 
 == Summary
