@@ -20,7 +20,7 @@ I work most of the time as an external consultant in the "business software" are
 
 The team-leader of the team where I work at the moment has a background in electrical engineering.
 For him, it's totally clear that we have "feedback control" like systems using controllers, sensors *everywhere*.
-These "things" give you "cruise control" in your car, a constant temperature in your room, a hearing aid device which adopts to the level "sound"
+These "things" give you "cruise control" in your car, a constant temperature in your room, a hearing aid device in your ear which adopts to the sound-level
 or a self-flying plane with two dormant pilots.
 
 You certainly noticed, that when you are driving your car and using the "cruise control" feature of it, the car goes at
@@ -32,7 +32,7 @@ otherwise you have the same speed as the car in front of you. That's cool!
 *But why did I never see something like this in the design of a software system?*
 
 For example in a batch program, where the number of workers (threads) is dependent on the average CPU load of the system it's working on?
-We want to go "fullspeed", but not to go into the "red zone". And not to slow. E.g. our batch program should use 85%-90% of the CPU power
+We want to go "fullspeed", but not to go into the "red zone" (100% CPU or swapping memory). And not to slow. E.g. our batch program should use 85%-90% of the CPU power
 (or memory, or ...). The problem here is, that each piece of work that the workers (threads) do, is not very deterministic
 (because of if/else, strategies, calls to other systems, ... everywhere in the sourcecode).
 
@@ -115,7 +115,7 @@ TODO illustration
 
 ==== Setup
 
-Same as 1, but with a better controller. A PID controller :footnote[http://en.wikipedia.org/wiki/PID_controller], which is widely used today in home automation, cars, ...
+Same as 1, but with a better controller. A PID controller footnote:[http://en.wikipedia.org/wiki/PID_controller], which is widely used today in home automation, cars, ...
 
 ==== Expectation
 
@@ -128,6 +128,7 @@ Regarding thread-pool sizes
 * Payload of workers not deterministic (internal disturbance)
 * CPU load of external process varying (external disturbance)
 * A second source to control a level: Amount of free (or used) memory
+* A more advanced controller using MRAC/MIAC footnote:[http://en.wikipedia.org/wiki/Adaptive_control]
 * ...
 
 
