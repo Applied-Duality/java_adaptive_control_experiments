@@ -44,6 +44,7 @@ where always exactly the same piece of software runs. Think of a software vendor
 of different customers using different old and new macbooks, desktops, rasperry-pis, etc. That's either a lot of work to create
 different "default" configurations, kind of an if/else-hell in the sourcecode or just a suboptimal configuration.
 
+Recently I found the call of William Louth for a "self-adaptive manifesto" footnote:[http://www.infoq.com/news/2013/08/reactive-programming-emerging] which made me start thinking.
 
 == My motivation of appyling adaptive control in software systems
 
