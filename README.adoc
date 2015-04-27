@@ -129,6 +129,7 @@ Regarding adaptive thread-pool sizes
 * Payload of workers not deterministic (internal disturbance)
 * CPU load of external process varying (external disturbance)
 * A second source to control a level: Amount of free (or used) memory
+* Payload of workers with a lot of contention -> more threads will not increase CPU load, instead it will increase contention
 * A more advanced controller using MRAC/MIAC footnote:[http://en.wikipedia.org/wiki/Adaptive_control]
 * ...
 
